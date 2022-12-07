@@ -15,7 +15,7 @@ import java.util.Optional;
 @ApplicationScoped
 @Produces("application/json")
 @Consumes("application/json")
-@RolesAllowed("user")
+@RolesAllowed({"user","admin"})
 public class OrderResource {
 
     @GET

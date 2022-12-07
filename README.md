@@ -13,6 +13,13 @@ This is the source code for my article on [how to securing a Angular frontend an
   - Node.js 12.19.0
   - Yarn 1.22.5
 
+### Changelog
+  - 6 Dec 2022
+    - Keycloak 17.0.0
+    - Angular 14.2.10
+    - Node.js 16.18.1
+    - Yarn 1.22.19
+
 ## Installing and Configuring Keycloak
 Download the standalone server distribution from the [Keycloak website](https://www.keycloak.org/), unpack it and start the server. Follow the [Getting Started](https://www.keycloak.org/docs/latest/getting_started/index.html#creating-the-admin-account) instructions to setup the administrator account.
 
@@ -41,7 +48,7 @@ In the **Valid Redirect URIs** field enter the two URLs: `http://localhost:8081/
 And in the **Web Origins** fields simply add a `*` (asterisk)
 #### 3. Create roles and assign permissions
 In the Keycloak administration console create two new roles, named: `user` and `admin`
-Edit the `admin` role and enable the **Composite Roles** flag and choose `realm-management` from the **Client Roles** droplist. 
+Edit the `admin` role and enable the **Composite Roles** flag and choose `realm-management` from the **Client Roles** droplist.
 Highlight the `view-users` option in the **Available Roles** block and then click on the "Add selected" button.
 #### 4. Create the following users:
 | Username | Password | First Name | Last Name | Email | Roles |
@@ -72,7 +79,7 @@ You will be presented with the Keycloak login screen:
 
 ![Keycloak Login](images/keycloak_login.png?raw=true "Keycloak Login")
 
-Enter one of the username and password combination created earlier to sign in. 
+Enter one of the username and password combination created earlier to sign in.
 
 After a successful login you will see the product catalog page:
 ![Landing Page](images/shopapp.png?raw=true "Landing Page")

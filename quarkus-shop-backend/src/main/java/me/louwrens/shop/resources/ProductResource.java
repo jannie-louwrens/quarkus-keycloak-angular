@@ -20,7 +20,7 @@ public class ProductResource {
 
     @GET
     @Path("products")
-    @RolesAllowed("user")
+    @RolesAllowed({"user","admin"})
     public List<ProductEntity> searchForProducts(@QueryParam("productCatalogId") Optional<Long> productCatalogId,
                                                  @QueryParam("date") Optional<LocalDate> date) {
         if (productCatalogId.isPresent() && date.isPresent()) {
@@ -40,7 +40,7 @@ public class ProductResource {
 
     @GET
     @Path("products/{id}")
-    @RolesAllowed("user")
+    @RolesAllowed({"user","admin"})
     public ProductEntity getProduct(@PathParam("id") Long id) {
         ProductEntity entity = ProductEntity.findById(id);
         if (entity == null) {

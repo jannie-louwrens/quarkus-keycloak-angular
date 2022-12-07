@@ -1,29 +1,30 @@
 // This file can be replaced during build by using the `fileReplacements` array.
-// `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
+// `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
-
-import { KeycloakOptions } from 'keycloak-angular/public_api';
+import { KeycloakOptions } from 'keycloak-angular';
 import { KeycloakConfig, KeycloakInitOptions } from 'keycloak-js';
 
 const keycloakConfig: KeycloakConfig = {
-  url: 'http://localhost:8080/auth',
+  url: 'http://localhost:8080',
   realm: 'demo',
-  clientId: 'my-app'
+  clientId: 'my-app',
 };
 
 const keycloakInitOptions: KeycloakInitOptions = {
   onLoad: 'login-required',
-  checkLoginIframe: false
+  checkLoginIframe: false,
 };
 
 const keycloakOptions: KeycloakOptions = {
   config: keycloakConfig,
-  initOptions: keycloakInitOptions
+  initOptions: keycloakInitOptions,
+  enableBearerInterceptor: true,
+  loadUserProfileAtStartUp: true,
 };
 
 export const environment = {
   production: false,
-  keycloakOptions
+  keycloakOptions,
 };
 
 /*
@@ -33,4 +34,4 @@ export const environment = {
  * This import should be commented out in production mode because it will have a negative impact
  * on performance if an error is thrown.
  */
-// import 'zone.js/dist/zone-error';  // Included with Angular CLI.
+// import 'zone.js/plugins/zone-error';  // Included with Angular CLI.
