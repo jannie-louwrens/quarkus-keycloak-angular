@@ -7,19 +7,15 @@ import { ProductCatalogService } from '../../services/product-catalog.service';
 @Component({
   selector: 'app-product-catalog',
   templateUrl: './product-catalog.component.html',
-  styles: [
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styles: [],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductCatalogComponent implements OnDestroy {
+  allProductCatalogs$ = this.productCatalogService.allProductCatalogs$;
+  selectedProductCatalog$ =
+    this.productCatalogService.productCatalogSelectedAction$;
 
-  allProductCatalogs$: Observable<ProductCatalog[]>;
-  selectedProductCatalog$: Observable<ProductCatalog>;
-
-  constructor(private productCatalogService: ProductCatalogService) {
-    this.allProductCatalogs$ = this.productCatalogService.allProductCatalogs$;
-    this.selectedProductCatalog$ = this.productCatalogService.productCatalogSelectedAction$;
-   }
+  constructor(private productCatalogService: ProductCatalogService) {}
 
   ngOnDestroy(): void {
     this.productCatalogService.changeSelectedProductCatalog(null);
@@ -28,5 +24,4 @@ export class ProductCatalogComponent implements OnDestroy {
   onSelectProductCatalogEvent(productCatalog: ProductCatalog) {
     this.productCatalogService.changeSelectedProductCatalog(productCatalog);
   }
-
 }

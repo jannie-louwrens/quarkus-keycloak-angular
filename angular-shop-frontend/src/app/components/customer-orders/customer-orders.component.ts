@@ -9,34 +9,35 @@ import { OrderService } from 'src/app/services/order.service';
 @Component({
   selector: 'app-customer-orders',
   templateUrl: './customer-orders.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CustomerOrdersComponent implements OnInit {
-
-  customer: Customer;
+  customer: Customer | undefined;
 
   constructor(
     private route: ActivatedRoute,
     private customerService: CustomerService,
     private orderService: OrderService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.loadOrdersByUsername(this.route.snapshot.params['username']);
   }
 
   loadOrdersByUsername(username: string) {
-    this.customerService.getCustomerByUsername(username).pipe(
-      tap(data => this.customer = data),
-      flatMap(customer => {
-        return this.orderService.getOrdersByCustomer(customer.username).pipe(
-          tap((orders: Order[]) => {
-            customer.orders = orders;
-          })
-        )
-      })
-     ).subscribe();
+    this.customerService
+      .getCustomerByUsername(username)
+      .pipe(
+        tap((data) => (this.customer = data)),
+        flatMap((customer) => {
+          const username = customer!.username ?? '';
+          return this.orderService.getOrdersByCustomer(username).pipe(
+            tap((orders: Order[]) => {
+              customer.orders = orders;
+            })
+          );
+        })
+      )
+      .subscribe();
   }
-
 }

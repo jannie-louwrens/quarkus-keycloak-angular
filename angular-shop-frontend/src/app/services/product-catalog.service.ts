@@ -6,24 +6,22 @@ import { catchError, tap, shareReplay } from 'rxjs/operators';
 import { ProductCatalog } from '../models/product-catalog';
 
 const headers = new HttpHeaders().set('Content-Type', 'application/json');
-const apiUrl = "/api/productcatalogs";
+const apiUrl = '/api/productcatalogs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProductCatalogService {
+  private productCatalogSelectedSubject =
+    new BehaviorSubject<ProductCatalog | null>(null);
+  productCatalogSelectedAction$ =
+    this.productCatalogSelectedSubject.asObservable();
 
-  private productCatalogSelectedSubject = new BehaviorSubject<ProductCatalog>(null);
-  productCatalogSelectedAction$= this.productCatalogSelectedSubject.asObservable();
+  allProductCatalogs$ = this.http
+    .get<ProductCatalog[]>(apiUrl, { headers })
+    .pipe(tap(console.table), shareReplay(1), catchError(this.handleError));
 
-  allProductCatalogs$ = this.http.get<ProductCatalog[]>(apiUrl, {headers})
-    .pipe(
-      tap(console.table),
-      shareReplay(1),
-      catchError(this.handleError)
-    );
-
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   // Change the selected productCatalog.
   changeSelectedProductCatalog(productCatalog: ProductCatalog | null): void {
@@ -45,5 +43,4 @@ export class ProductCatalogService {
     console.error(err);
     return throwError(errorMessage);
   }
-
 }

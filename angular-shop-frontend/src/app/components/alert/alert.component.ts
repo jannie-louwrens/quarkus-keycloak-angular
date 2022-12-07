@@ -4,33 +4,32 @@ import { AlertService } from 'src/app/services/alert.service';
 
 @Component({
   selector: 'app-alert',
-  template: `<div *ngIf="message" [ngClass]="message.cssClass" class="mt-3">{{message.text}}</div>`,
-  styles: []
+  template: `<div *ngIf="message" [ngClass]="message.cssClass" class="mt-3">
+    {{ message.text }}
+  </div>`,
+  styles: [],
 })
 export class AlertComponent implements OnInit, OnDestroy {
-
-  private subscription: Subscription;
+  private subscription: Subscription | undefined;
   message: any;
 
-  constructor(private alertService: AlertService) { }
+  constructor(private alertService: AlertService) {}
   ngOnInit(): void {
-    this.subscription = this.alertService.getAlert()
-      .subscribe(message => {
-        switch (message && message.type) {
-          case 'success':
-              message.cssClass = 'alert alert-success';
-              break;
-          case 'error':
-              message.cssClass = 'alert alert-danger';
-              break;
-        }
+    this.subscription = this.alertService.getAlert().subscribe((message) => {
+      switch (message && message.type) {
+        case 'success':
+          message.cssClass = 'alert alert-success';
+          break;
+        case 'error':
+          message.cssClass = 'alert alert-danger';
+          break;
+      }
 
-        this.message = message;
-      });
+      this.message = message;
+    });
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.subscription!.unsubscribe();
   }
-
 }
