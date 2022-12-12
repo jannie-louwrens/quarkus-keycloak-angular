@@ -1,0 +1,26 @@
+<div class="card border-primary">
+  <div class="card-header text-white bg-primary">
+    Product Catalogs
+    <br /><small class="text-light">Select a productCatalog</small>
+  </div>
+  <ul
+    *ngIf="allProductCatalogs$ | async as productCatalogs"
+    class="list-group list-group-flush"
+  >
+    <li
+      *ngFor="let productCatalog of productCatalogs"
+      class="list-group-item list-group-item-action py-1 d-flex align-items-center"
+      style="cursor: pointer"
+      (click)="onSelectProductCatalogEvent(productCatalog)"
+    >
+      {{ productCatalog.name }}
+      <span *ngIf="selectedProductCatalog$ | async as selectedProductCatalog">
+        <i
+          class="bi bi-check-circle float-right text-success ms-3"
+          style="font-size: 1.5rem"
+          *ngIf="selectedProductCatalog.id === productCatalog.id"
+        ></i>
+      </span>
+    </li>
+  </ul>
+</div>
