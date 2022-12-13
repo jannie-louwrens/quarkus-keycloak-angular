@@ -50,7 +50,7 @@ import { CartFacadeService } from '../cart/data-access/cart-facade.service';
                 <div class="card-footer">
                   <button
                     type="button"
-                    class="btn btn-primary btn-sm float-right"
+                    class="btn btn-primary btn-sm"
                     (click)="onAddToCart(product)"
                   >
                     Add to Cart
