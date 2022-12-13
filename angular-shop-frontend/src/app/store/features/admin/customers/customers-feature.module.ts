@@ -8,7 +8,7 @@ import { CustomerInfo } from './data-access/customer-info';
 @Component({
   selector: 'app-customers',
   template: `
-    <div *ngIf="customers$ | async as customers">
+    <div class="container" *ngIf="customers$ | async as customers">
       <table class="table table-bordered">
         <thead class="bg-primary text-white">
           <tr>

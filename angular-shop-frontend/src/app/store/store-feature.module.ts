@@ -1,4 +1,4 @@
-import { CommonModule, DecimalPipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Component, NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
@@ -8,7 +8,6 @@ import { AuthModule } from '../auth/auth.module';
 import { AuthService } from '../auth/data-access/auth.service';
 import { AlertComponent } from './ui/alert/alert.component';
 import { PageNotFoundComponent } from './ui/page-not-found/page-not-found.component';
-import { RemoveCommaPipe } from './utils/pipes/remove-comma.pipe';
 import { CartFacadeService } from './features/cart/data-access/cart-facade.service';
 import { HeaderComponent } from './ui/header/header.component';
 import { SidebarComponent } from './ui/sidebar/sidebar.component';
@@ -112,8 +111,7 @@ const routes: Routes = [
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
-    DecimalPipe,
-    RemoveCommaPipe,
+    DatePipe,
   ],
   exports: [RouterModule],
   declarations: [
@@ -121,7 +119,6 @@ const routes: Routes = [
     HeaderComponent,
     SidebarComponent,
     AlertComponent,
-    RemoveCommaPipe,
   ],
 })
 export class StoreFeatureModule {}

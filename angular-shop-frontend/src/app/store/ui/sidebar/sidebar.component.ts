@@ -76,7 +76,7 @@ import { UserProfile } from 'src/app/auth/data-access/user-profile';
               routerLinkActive="active"
             >
               <i class="bi bi-boxes me-2" style="font-size: 1.5rem"></i>
-              Products
+              Inventory
             </a>
           </li>
         </ul>

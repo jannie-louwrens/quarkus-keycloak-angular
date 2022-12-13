@@ -4,28 +4,18 @@ import { throwError, BehaviorSubject, Observable } from 'rxjs';
 import { catchError, tap, shareReplay } from 'rxjs/operators';
 import { ProductCatalog } from './product-catalog';
 
-const headers = new HttpHeaders().set('Content-Type', 'application/json');
-const apiUrl = '/api/productcatalogs';
-
 @Injectable({
   providedIn: 'root',
 })
 export class ProductCatalogService {
-  private productCatalogSelectedSubject =
-    new BehaviorSubject<ProductCatalog | null>(null);
-  productCatalogSelectedAction$ =
-    this.productCatalogSelectedSubject.asObservable();
+  private headers = new HttpHeaders().set('Content-Type', 'application/json');
+  private apiUrl = '/api/productcatalogs';
 
   allProductCatalogs$: Observable<ProductCatalog[]> = this.http
-    .get<ProductCatalog[]>(apiUrl, { headers })
-    .pipe(tap(console.table), shareReplay(1), catchError(this.handleError));
+    .get<ProductCatalog[]>(this.apiUrl, { headers: this.headers })
+    .pipe(shareReplay(1), catchError(this.handleError));
 
   constructor(private http: HttpClient) {}
-
-  // Change the selected productCatalog.
-  changeSelectedProductCatalog(productCatalog: ProductCatalog | null): void {
-    this.productCatalogSelectedSubject.next(productCatalog);
-  }
 
   private handleError(err: any) {
     // in a real world app, we may send the server to some remote logging infrastructure
@@ -40,6 +30,6 @@ export class ProductCatalogService {
       errorMessage = `Backend returned code ${err.status}: ${err.message}`;
     }
     console.error(err);
-    return throwError(errorMessage);
+    return throwError(() => new Error(errorMessage));
   }
 }
