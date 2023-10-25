@@ -1,105 +1,52 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-  <div class="container-fluid">
-    <a class="navbar-brand" routerLink="/"
-      ><fa-icon icon="store" size="lg" class="mr-2"></fa-icon>Foodies</a
-    >
-    <button
-      class="navbar-toggler"
-      type="button"
-      (click)="toggleNavbar()"
-      data-toggle="collapse"
-      data-target="#navbarCollapse"
-      aria-controls="navbarCollapse"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
+  <a class="navbar-brand" routerLink="/"><fa-icon icon="store" size="lg" class="mr-2"></fa-icon>Foodies</a>
+  <button class="navbar-toggler" type="button" (click)="toggleNavbar()" data-toggle="collapse" data-target="#navbarCollapse"
+          aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
 
-    <div
-      class="collapse navbar-collapse"
-      id="navbarCollapse"
-      [ngbCollapse]="isNavbarCollapsed"
-    >
-      <ul
-        [ngSwitch]="(userProfile$ | async)?.isAdministrator"
-        class="navbar-nav me-auto"
-      >
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/shop" routerLinkActive="active"
-            >Shop</a
-          >
-        </li>
-        <li *ngSwitchCase="true" class="nav-item">
-          <a class="nav-link" routerLink="/orders" routerLinkActive="active"
-            >Orders</a
-          >
-        </li>
-        <li *ngSwitchCase="true" class="nav-item">
-          <a class="nav-link" routerLink="/customers" routerLinkActive="active"
-            >Customers</a
-          >
-        </li>
-        <li *ngSwitchCase="true" class="nav-item">
-          <a class="nav-link" routerLink="/inventory" routerLinkActive="active"
-            >Inventory</a
-          >
-        </li>
-      </ul>
-
-      <ul class="navbar-nav ms-auto">
-        <li *ngIf="myOrders$ | async as myOrders" class="nav-item">
-          <a
-            class="nav-link"
-            routerLink="/cart"
-            routerLinkActive="active"
-            ngbTooltip="My Orders"
-            placement="bottom"
-          >
-            <fa-icon icon="shopping-cart" size="lg"></fa-icon>
-            <span class="badge rounded-pill text-bg-danger count">{{
-              myOrders.length
-            }}</span>
-          </a>
-        </li>
-        <li class="nav-item dropdown" ngbDropdown>
-          <a
-            class="nav-link dropdown-toggle"
-            ngbDropdownToggle
-            role="button"
-            (click)="(false)"
-          >
-            <fa-icon icon="user-circle" size="lg"></fa-icon>
-          </a>
-          <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end">
-            <div ngbDropdownItem>
-              <div class="font-weight-bold" role="menuitem">
-                {{ (userProfile$ | async)?.firstName }}
-                {{ (userProfile$ | async)?.lastName }}
-              </div>
-              <small class="text-secondary" role="menuitem">{{
-                (userProfile$ | async)?.username
-              }}</small>
-            </div>
-            <div class="divider dropdown-divider"></div>
-            <a
-              ngbDropdownItem
-              (click)="doLogout()"
-              class="dropdown-item"
-              style="cursor: pointer"
-              >Logout</a
-            >
-          </div>
-        </li>
-      </ul>
-
-      <!-- <ul *ngSwitchCase="false" class="navbar-nav ml-auto">
+  <div [ngSwitch]="(user$ | async)?.isLoggedIn" class="collapse navbar-collapse" id="navbarCollapse" [ngbCollapse]="isNavbarCollapsed">
+    <ul *ngSwitchCase="true" [ngSwitch]="(user$ | async)?.isAdministrator" class="navbar-nav mr-auto">
       <li class="nav-item">
-        <a class="nav-link" routerLink="/login" routerLinkActive="active"
-          >Login</a
-        >
+        <a class="nav-link" routerLink="/shop" routerLinkActive="active">Shop</a>
       </li>
-    </ul> -->
-    </div>
+      <li *ngSwitchCase="true" class="nav-item">
+        <a class="nav-link" routerLink="/orders" routerLinkActive="active">Orders</a>
+      </li>
+      <li *ngSwitchCase="true" class="nav-item">
+        <a class="nav-link" routerLink="/customers" routerLinkActive="active">Customers</a>
+      </li>
+      <li *ngSwitchCase="true" class="nav-item">
+        <a class="nav-link" routerLink="/inventory" routerLinkActive="active">Inventory</a>
+      </li>
+    </ul>
+
+    <ul *ngSwitchCase="true" class="navbar-nav ml-auto">
+      <li *ngIf="myOrders$ | async as myOrders" class="nav-item">
+        <a class="nav-link" routerLink="/cart" routerLinkActive="active" ngbTooltip="My Orders" placement="bottom">
+          <fa-icon icon="shopping-cart" size="lg"></fa-icon>
+          <span class="badge badge-pill badge-danger count">{{ myOrders.length }}</span>
+        </a>
+      </li>
+      <li class="nav-item dropdown" ngbDropdown>
+        <a class="nav-link dropdown-toggle" ngbDropdownToggle role="button" (click)="false">
+          <fa-icon icon="user-circle" size="lg"></fa-icon>
+        </a>
+        <div ngbDropdownMenu class="dropdown-menu dropdown-menu-right">
+          <div ngbDropdownItem >
+            <div class="font-weight-bold" role="menuitem">{{ (user$ | async)?.firstName }} {{ (user$ | async)?.lastName }}</div>
+            <small class="text-secondary" role="menuitem">{{ (user$ | async)?.username }}</small>
+          </div>
+          <div class="divider dropdown-divider"></div>
+          <a ngbDropdownItem  (click)="doLogout()"class="dropdown-item" style="cursor: pointer;">Logout</a>
+        </div>
+      </li>
+    </ul>
+
+    <ul *ngSwitchCase="false" class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/login" routerLinkActive="active">Login</a>
+      </li>
+    </ul>
   </div>
 </nav>

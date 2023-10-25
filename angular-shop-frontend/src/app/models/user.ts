@@ -1,5 +1,6 @@
 import { KeycloakProfile } from 'keycloak-js';
 
-export interface UserProfile extends KeycloakProfile {
+export interface User extends KeycloakProfile {
+  isLoggedIn?: boolean | false;
   isAdministrator?: boolean | false;
 }

@@ -5,4 +5,8 @@ import { Component } from '@angular/core';
   template: '<router-outlet></router-outlet>',
   styles: [],
 })
-export class AppComponent {}
+export class AppComponent {
+
+  constructor() { }
+
+}

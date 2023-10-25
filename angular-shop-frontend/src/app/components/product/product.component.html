@@ -1,24 +1,13 @@
-<div
-  *ngIf="productsByCategory$ | async as products"
-  class="row row-cols-1 row-cols-md-3 g-4"
->
+<div *ngIf="productsByCategory$ | async as products" class="card-deck">
   <div *ngFor="let product of products" class="col-4">
     <div class="card h-100 border-primary">
       <div class="card-header text-white bg-primary">{{ product.name }}</div>
       <div class="card-body">
         <p class="card-text h-50">{{ product.description }}</p>
-        <h5 class="card-text float-right">
-          {{ product.unitPrice | currency : "ZAR" : "symbol-narrow" }}
-        </h5>
+        <h5 class="card-text float-right">{{ product.unitPrice | currency:'ZAR':'symbol-narrow' }}</h5>
       </div>
       <div class="card-footer">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm float-right"
-          (click)="openAddToCartModal(addToCartTemplate, product)"
-        >
-          Add to Cart
-        </button>
+        <button type="button" class="btn btn-primary btn-sm float-right" (click)="openAddToCartModal(addToCartTemplate, product)">Add to Cart</button>
       </div>
     </div>
   </div>
@@ -30,79 +19,36 @@
   </div>
   <div class="modal-body">
     <small class="text-danger">* required fields</small>
-    <form [formGroup]="orderForm!">
-      <div class="form-group">
-        <label for="name">Product</label>
-        <input
-          type="text"
-          formControlName="product"
-          class="form-control"
-          id="product"
-        />
-      </div>
-      <div class="form-group">
-        <label for="unitPrice">Unit Price</label>
-        <div class="input-group">
-          <div class="input-group-prepend">
-            <span class="input-group-text">R</span>
+    <form [formGroup]="orderForm">
+        <div class="form-group">
+            <label for="name">Product</label>
+            <input type="text" formControlName="product" class="form-control" id="product">
+        </div>
+        <div class="form-group">
+          <label for="unitPrice">Unit Price</label>
+          <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">R</span>
+              </div>
+              <input type="text" formControlName="unitPrice" class="form-control" id="unitPrice">
           </div>
-          <input
-            type="text"
-            formControlName="unitPrice"
-            class="form-control"
-            id="unitPrice"
-          />
         </div>
-      </div>
-      <div class="form-group">
-        <label for="quantity">Quantity<span class="text-danger">*</span></label>
-        <input
-          type="number"
-          formControlName="quantity"
-          class="form-control"
-          id="quantity"
-          required
-          placeholder="0"
-          [ngClass]="{ 'is-invalid': f.quantity.touched && f.quantity.errors }"
-          min="1"
-        />
-        <div
-          *ngIf="f.quantity.touched && f.quantity.errors"
-          class="invalid-feedback"
-        >
-          <div *ngIf="f.quantity.errors.required">Please enter a quantity!</div>
+        <div class="form-group">
+            <label for="quantity">Quantity<span class="text-danger">*</span></label>
+            <input type="number" formControlName="quantity" class="form-control" id="quantity" required placeholder="0"
+              [ngClass]="{ 'is-invalid': f.quantity.touched && f.quantity.errors }" min="1">
+            <div *ngIf="f.quantity.touched && f.quantity.errors" class="invalid-feedback">
+              <div *ngIf="f.quantity.errors.required">Please enter a quantity!</div>
+            </div>
         </div>
-      </div>
-      <div class="form-group">
-        <label for="total">Total</label>
-        <input
-          type="text"
-          value="{{
-            f.unitPrice.value * f.quantity.value
-              | currency : 'ZAR' : 'symbol-narrow'
-          }}"
-          class="form-control"
-          id="total"
-          disabled
-        />
-      </div>
+        <div class="form-group">
+            <label for="total">Total</label>
+            <input type="text" value="{{(f.unitPrice.value * f.quantity.value) | currency:'ZAR':'symbol-narrow'}}" class="form-control" id="total" disabled>
+        </div>
     </form>
   </div>
   <div class="modal-footer">
-    <button
-      type="button"
-      class="btn btn-primary"
-      (click)="onAddItemToCart()"
-      [disabled]="orderForm!.invalid"
-    >
-      Save
-    </button>
-    <button
-      type="button"
-      class="btn btn-outline-dark"
-      (mousedown)="modal.dismiss()"
-    >
-      Cancel
-    </button>
+    <button type="button" class="btn btn-primary" (click)="onAddItemToCart()" [disabled]="orderForm.invalid">Save</button>
+    <button type="button" class="btn btn-outline-dark" (mousedown)="modal.dismiss()">Cancel</button>
   </div>
 </ng-template>

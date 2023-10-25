@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Customer } from 'src/app/models/customer';
 import { CustomerService } from '../../services/customer.service';
@@ -6,10 +6,18 @@ import { CustomerService } from '../../services/customer.service';
 @Component({
   selector: 'app-orders',
   templateUrl: './orders.component.html',
-  styles: [],
+  styles: [
+  ]
 })
-export class OrdersComponent {
-  customersWithOrderItems$ = this.customerService.getCustomersWithOrderItems();
+export class OrdersComponent implements OnInit {
 
-  constructor(private customerService: CustomerService) {}
+  customersWithOrderItems$: Observable<Customer[]>;
+
+  constructor(private customerService: CustomerService) {
+  }
+
+  ngOnInit(): void {
+    this.customersWithOrderItems$ = this.customerService.getCustomersWithOrderItems();
+  }
+
 }
