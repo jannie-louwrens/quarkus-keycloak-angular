@@ -14,7 +14,7 @@ import java.util.List;
 @ApplicationScoped
 @Produces("application/json")
 @Consumes("application/json")
-@RolesAllowed({"user","admin"})
+@RolesAllowed("user")
 public class ProductCatalogResource {
 
     @GET

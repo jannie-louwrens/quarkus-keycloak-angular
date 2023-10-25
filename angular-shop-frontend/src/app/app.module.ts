@@ -6,7 +6,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { SharedModule } from './shared/shared.module';
 
-import { HttpErrorInterceptor } from './interceptors/http-error.interceptor';
+import { HttpErrorInterceptor} from './interceptors/http-error.interceptor';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -42,7 +42,7 @@ import { RemoveCommaPipe } from './pipes/remove-comma.pipe';
     NavBarComponent,
     InventoryComponent,
     ProductListComponent,
-    RemoveCommaPipe,
+    RemoveCommaPipe
   ],
   imports: [
     BrowserModule,
@@ -50,23 +50,19 @@ import { RemoveCommaPipe } from './pipes/remove-comma.pipe';
     ReactiveFormsModule,
     SharedModule,
     AppRoutingModule,
-    KeycloakAngularModule,
+    KeycloakAngularModule
   ],
   providers: [
     DecimalPipe,
     RemoveCommaPipe,
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeKeycloak,
-      multi: true,
-      deps: [KeycloakService],
-    },
-    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
+    { provide: APP_INITIALIZER, useFactory: initializeKeycloak, multi: true, deps: [KeycloakService] },
+    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }
   ],
-  bootstrap: [AppComponent],
+  bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }
 
 function initializeKeycloak(keycloak: KeycloakService) {
-  return () => keycloak.init(environment.keycloakOptions);
+  return () =>
+    keycloak.init(environment.keycloakOptions);
 }
