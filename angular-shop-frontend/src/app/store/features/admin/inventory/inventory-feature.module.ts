@@ -22,7 +22,7 @@ import { ProductFacadeService } from './data-access/product-facade.service';
 @Component({
   selector: 'app-inventory',
   template: `
-    <div class="container-fluid">
+    <div class="contianer-fluid">
       <div class="card border-primary">
         <div class="card-header  text-white bg-primary">Product Inventory</div>
         <div class="card-body" *ngIf="vm$ | async as vm">
