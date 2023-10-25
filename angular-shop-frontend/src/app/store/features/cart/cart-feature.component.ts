@@ -26,8 +26,30 @@ import { CartItemComponent } from './ui/cart-item/cart-item.component';
 export class CartComponent {
   itemsInCart$ = this.cartFacadeService.cartWithCRUD$;
 
+  onDeleteOrder(order: Order): void {
+    console.log(
+      '🚀 ~ file: cart-feature.component.ts:20 ~ CartComponent ~ onDeleteOrder ~ method not implemented'
+    );
+  }
+
   updateOrder(updatedOrder: Order): void {
     this.cartFacadeService.updateItem(updatedOrder);
+  }
+
+  onIncreaseQuantity(order: Order): void {
+    const updatedOrder = { ...order, quantity: ++order.quantity };
+    this.cartFacadeService.updateItem(updatedOrder);
+  }
+
+  calcItems(orders: Order[]): number {
+    return orders.reduce((tally, order) => tally + order.quantity, 0);
+  }
+
+  calcTotal(orders: Order[]): number {
+    return orders.reduce(
+      (tally, order) => tally + order.quantity * order.unitPrice,
+      0
+    );
   }
 
   constructor(private cartFacadeService: CartFacadeService) {}

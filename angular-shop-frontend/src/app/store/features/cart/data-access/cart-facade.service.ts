@@ -107,6 +107,7 @@ export class CartFacadeService {
         quantity: 1,
         customerId: this.authService.getLoginUsername(),
       } as Order;
+      console.log(item);
       this.itemModifiedSubject.next({ item, action: 'add' });
     }
   }

@@ -1,9 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { BehaviorSubject, combineLatest, throwError } from 'rxjs';
+import { filter, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 
+import { ProductCatalogService } from './product-catalog.service';
 import { Product } from './product';
-import { DatePipe } from '@angular/common';
+
+const headers = new HttpHeaders().set('Content-Type', 'application/json');
+const apiUrl = '/api/products';
 
 @Injectable({
   providedIn: 'root',
@@ -11,46 +15,119 @@ import { DatePipe } from '@angular/common';
 export class ProductService {
   private productApiUrl = '/api/products';
   private headers = new HttpHeaders().set('Content-Type', 'application/json');
-  private params = new HttpParams().set(
-    'date',
-    this.datePipe.transform(new Date().toISOString(), 'yyy-MM-dd')!
-  );
+
+  private productCategories$ = this.productCatalogService.allProductCatalogs$;
 
   public products$ = this.http.get<Product[]>(this.productApiUrl, {
     headers: this.headers,
-    params: this.params,
   });
 
-  constructor(private http: HttpClient, private datePipe: DatePipe) {}
+  public productsWithCategory$ = combineLatest([
+    this.products$,
+    this.productCategories$,
+  ]).pipe(
+    map(([products, categories]) =>
+      products.map(
+        (product) =>
+          ({
+            ...product,
+            productCatalog: categories.find(
+              (c: { id: number }) => product.productCatalogId === c.id
+            )?.name,
+          } as Product)
+      )
+    ),
+    shareReplay(1)
+  );
 
-  createProduct(
-    productCatalogId: number,
-    product: Product
-  ): Observable<Product> {
+  // --- old version
+
+  private dataStore: { products: Product[] } = { products: [] };
+  private productsByCategory = new BehaviorSubject<Product[]>([]);
+  readonly productsByCategoryAction$ = this.productsByCategory.asObservable();
+
+  constructor(
+    private http: HttpClient,
+    private productCatalogService: ProductCatalogService
+  ) {}
+
+  loadProductsByCategory() {
+    this.dataStore = { products: [] };
+    this.productsByCategory.next(Object.assign({}, this.dataStore).products);
+
+    this.productCatalogService.productCatalogSelectedAction$
+      .pipe(
+        // Handle the case of no selection.
+        filter((productCatalog) => Boolean(productCatalog)),
+        // Get the products for the selected catalog.
+        switchMap(async (productCatalog) => {
+          const params = new HttpParams().set(
+            'productCatalogId',
+            productCatalog!.id.toString()
+          );
+          this.http
+            .get<Product[]>(apiUrl, { headers, params })
+            .subscribe((products) => {
+              this.dataStore.products = products;
+              this.productsByCategory.next(
+                Object.assign({}, this.dataStore).products
+              );
+            });
+        })
+      )
+      .subscribe();
+  }
+
+  createProduct(productCatalogId: number, product: Product): void {
     const params = new HttpParams().set(
       'productCatalogId',
       productCatalogId.toString()
     );
-    return this.http.post<Product>(
-      this.productApiUrl,
-      { ...product },
-      {
-        headers: this.headers,
-        params,
-      }
-    );
+    this.http
+      .post<Product>(apiUrl, JSON.stringify(product), { headers, params })
+      .subscribe((product) => {
+        this.dataStore.products.push(product);
+        this.productsByCategory.next(
+          Object.assign({}, this.dataStore).products
+        );
+      });
   }
 
-  updateProduct(product: Product): Observable<Product> {
-    return this.http.put<Product>(
-      `${this.productApiUrl}/${product.id}`,
-      { ...product },
-      {
-        headers: this.headers,
-      }
-    );
+  updateProduct(product: Product): void {
+    this.http
+      .put<Product>(`${apiUrl}/${product.id}`, JSON.stringify(product), {
+        headers,
+      })
+      .subscribe((product) => {
+        this.dataStore.products.forEach((t, i) => {
+          if (t.id === product.id) {
+            this.dataStore.products[i] = product;
+          }
+        });
+
+        this.productsByCategory.next(
+          Object.assign({}, this.dataStore).products
+        );
+      });
   }
 
+  updateAndRemoveProduct(product: Product) {
+    this.http
+      .put<Product>(`${apiUrl}/${product.id}`, JSON.stringify(product), {
+        headers,
+      })
+      .subscribe((product) => {
+        this.dataStore.products.forEach((t, i) => {
+          if (t.id === product.id) {
+            this.dataStore.products.splice(i, 1);
+          }
+        });
+
+        this.productsByCategory.next(
+          Object.assign({}, this.dataStore).products
+        );
+      });
+  }
   private handleError(err: any) {
     // in a real world app, we may send the server to some remote logging infrastructure
     // instead of just logging it to the console
@@ -64,6 +141,6 @@ export class ProductService {
       errorMessage = `Backend returned code ${err.status}: ${err.message}`;
     }
     console.error(err);
-    return throwError(() => new Error(errorMessage));
+    return throwError(errorMessage);
   }
 }

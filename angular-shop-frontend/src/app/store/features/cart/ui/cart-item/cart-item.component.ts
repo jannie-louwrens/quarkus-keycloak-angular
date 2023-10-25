@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-} from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Order } from 'src/app/store/features/admin/orders/data-access/order';
 
 @Component({
@@ -49,7 +43,6 @@ import { Order } from 'src/app/store/features/admin/orders/data-access/order';
       <small class="p-0">{{ item?.productCatalog }}</small>
     </div>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CartItemComponent {
   @Input() item!: Order | null;

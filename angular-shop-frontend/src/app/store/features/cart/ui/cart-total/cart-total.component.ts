@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Order } from 'src/app/store/features/admin/orders/data-access/order';
 
 @Component({
@@ -34,7 +34,6 @@ import { Order } from 'src/app/store/features/admin/orders/data-access/order';
       </div>
     </ng-template>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CartTotalComponent {
   @Input() items!: Order[] | null;

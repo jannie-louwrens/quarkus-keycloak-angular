@@ -1,14 +1,8 @@
-import { Component, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
+import { AppComponent } from './app.component';
 import { StoreFeatureModule } from './store/store-feature.module';
-
-@Component({
-  selector: 'app-root',
-  template: '<router-outlet></router-outlet>',
-  styles: [],
-})
-export class AppComponent {}
 
 @NgModule({
   declarations: [AppComponent],

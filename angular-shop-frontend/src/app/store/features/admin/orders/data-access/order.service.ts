@@ -2,7 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { tap, catchError, shareReplay } from 'rxjs/operators';
+import {
+  filter,
+  switchMap,
+  tap,
+  catchError,
+  shareReplay,
+} from 'rxjs/operators';
 
 import { AuthService } from '../../../../../auth/data-access/auth.service';
 
@@ -15,6 +21,7 @@ export class OrderService {
   private ordersApiUrl = '/api/orders';
   private headers = new HttpHeaders().set('Content-Type', 'application/json');
 
+  private dataStore: { orders: Order[] } = { orders: [] };
   private ordersForCustomer = new BehaviorSubject<Order[]>([]);
   readonly ordersForCustomerAction$: Observable<Order[]>;
 
@@ -25,7 +32,7 @@ export class OrderService {
   // All orders
   allOrders$: Observable<Order[]> = this.http
     .get<Order[]>(this.ordersApiUrl)
-    .pipe(shareReplay(1), catchError(this.handleError));
+    .pipe(tap(console.table), shareReplay(1), catchError(this.handleError));
 
   public getOrdersByCustomer(customerId: string): Observable<Order[]> {
     const params = new HttpParams().set('customerId', customerId);
@@ -47,6 +54,65 @@ export class OrderService {
     return this.http.put<Order>(`${this.ordersApiUrl}/${id}`, order, {
       headers: this.headers,
     });
+  }
+
+  createNewOrder(order: Order): void {
+    this.userService.userProfile$
+      .pipe(
+        // Handle the case of no selection.
+        filter((user) => Boolean(user)),
+        switchMap(async (user) => {
+          const username = user!.username ?? '';
+          return this.createOrderForCustomer(username, order);
+        }),
+        catchError(this.handleError)
+      )
+      .subscribe();
+  }
+
+  updateAnOrder(id: string, order: Order): void {
+    this.http
+      .put<Order>(`${this.ordersApiUrl}/${id}`, order, {
+        headers: this.headers,
+      })
+      .subscribe((order) => {
+        let itemIndex = this.dataStore.orders.findIndex(
+          (el) => el.id === order.id
+        );
+        this.dataStore.orders[itemIndex] = order;
+
+        this.ordersForCustomer.next(Object.assign({}, this.dataStore).orders);
+      });
+  }
+
+  loadOrdersForCurrentUser() {
+    this.userService.userProfile$
+      .pipe(
+        // Handle the case of no selection.
+        filter((user) => Boolean(user)),
+        // Get the orders for the current logged in User.
+        switchMap(async (user) => {
+          const username = user!.username ?? '';
+          this.getOrdersByCustomer(username).subscribe((orders) => {
+            this.dataStore.orders = orders;
+            this.ordersForCustomer.next(
+              Object.assign({}, this.dataStore).orders
+            );
+          });
+        }),
+        catchError(this.handleError)
+      )
+      .subscribe();
+  }
+
+  private createOrderForCustomer(customerId: string, order: Order): void {
+    const params = new HttpParams().set('customerId', customerId);
+    this.http
+      .post<Order>(this.ordersApiUrl, order, { headers: this.headers, params })
+      .subscribe((order) => {
+        this.dataStore.orders.push(order);
+        this.ordersForCustomer.next(Object.assign({}, this.dataStore).orders);
+      });
   }
 
   private handleError(err: {
