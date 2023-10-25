@@ -25,7 +25,7 @@ export class AuthService {
   constructor(private keycloakService: KeycloakService) {}
 
   public logout = async (): Promise<void> => {
-    await this.keycloakService.logout(location.origin);
+    await this.keycloakService.logout();
   };
 
   public getLoginUsername(): string {
